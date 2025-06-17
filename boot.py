@@ -2,13 +2,14 @@ import keys
 import network
 from time import sleep
 
+
 def connect():
     wlan = network.WLAN(network.STA_IF)         # Put modem on Station mode
     if not wlan.isconnected():                  # Check if already connected
         print('connecting to network...')
         wlan.active(True)                       # Activate network interface
         # set power mode to get WiFi power-saving off (if needed)
-        wlan.config(pm = 0xa11140)
+        wlan.config(pm=0xa11140)
         wlan.connect(keys.WIFI_SSID, keys.WIFI_PASS)  # Your WiFi Credential
         print('Waiting for connection...', end='')
         # Check if it is connected otherwise wait
@@ -20,7 +21,8 @@ def connect():
     print('\nConnected on {}'.format(ip))
     return ip
 
-def http_get(url = 'http://detectportal.firefox.com/'):
+
+def http_get(url='http://detectportal.firefox.com/'):
     import socket                           # Used by HTML get request
     import time                             # Used for delay
     _, _, host, path = url.split('/', 3)    # Separate URL request
@@ -28,20 +30,23 @@ def http_get(url = 'http://detectportal.firefox.com/'):
     s = socket.socket()                     # Initialise the socket
     s.connect(addr)                         # Try connecting to host address
     # Send HTTP request to the host with specific path
-    s.send(bytes('GET /%s HTTP/1.0\r\nHost: %s\r\n\r\n' % (path, host), 'utf8'))    
+    s.send(bytes('GET /%s HTTP/1.0\r\nHost: %s\r\n\r\n' % (path, host), 'utf8'))
     time.sleep(1)                           # Sleep for a second
     rec_bytes = s.recv(10000)               # Receve response
     print(rec_bytes)                        # Print the response
     s.close()                               # Close connection
 
+
 # WiFi Connection
 try:
     ip = connect()
+    print(f"✅ WiFi connected successfully! IP: {ip}")
 except KeyboardInterrupt:
     print("Keyboard interrupt")
 
-# HTTP request
+# HTTP request test
 try:
     http_get()
+    print("✅ Internet connection verified!")
 except (Exception, KeyboardInterrupt) as err:
-    print("No Internet", err)
+    print("❌ No Internet connection:", err)

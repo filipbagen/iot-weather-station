@@ -1,15 +1,57 @@
 import json
 import time
-from machine import Pin, ADC
-import dht
+import random
 from firebase_client import FirebaseClient
 
-# Hardware setup - Updated LED setup
-RED = Pin(0, Pin.OUT)                # Red LED for bad weather
-YELLOW = Pin(1, Pin.OUT)             # Yellow LED for okay weather
-GREEN = Pin(2, Pin.OUT)              # Green LED for nice weather
-dht_sensor = dht.DHT11(Pin(14))      # DHT11 on GPIO 14
-light_sensor = ADC(Pin(26))          # Photoresistor on GPIO 26 (ADC0)
+# Simulate hardware with mock classes
+
+
+class MockPin:
+    def __init__(self, pin, mode):
+        self.pin = pin
+        self.mode = mode
+        self._value = 0
+
+    def on(self):
+        self._value = 1
+        print(f"💡 LED {self.pin} ON")
+
+    def off(self):
+        self._value = 0
+        print(f"💡 LED {self.pin} OFF")
+
+    def value(self):
+        return self._value
+
+
+class MockDHT:
+    def __init__(self, pin):
+        self.pin = pin
+
+    def measure(self):
+        pass  # Simulate measurement
+
+    def temperature(self):
+        return random.randint(15, 30)  # Random temp between 15-30°C
+
+    def humidity(self):
+        return random.randint(40, 80)  # Random humidity 40-80%
+
+
+class MockADC:
+    def __init__(self, pin):
+        self.pin = pin
+
+    def read_u16(self):
+        return random.randint(200, 800)  # Random light sensor value
+
+
+# Mock hardware setup
+RED = MockPin(0, "OUT")                # Red LED for bad weather
+YELLOW = MockPin(1, "OUT")             # Yellow LED for okay weather
+GREEN = MockPin(2, "OUT")              # Green LED for nice weather
+dht_sensor = MockDHT(14)               # Mock DHT11
+light_sensor = MockADC(26)             # Mock photoresistor
 
 # Firebase setup
 firebase = FirebaseClient()
@@ -104,12 +146,12 @@ def get_outfit_recommendation(temp, humidity, light_level):
 def collect_sensor_data():
     """Collect data from all sensors"""
     try:
-        # Read DHT11 sensor
+        # Read DHT11 sensor (simulated)
         dht_sensor.measure()
         temperature = dht_sensor.temperature()
         humidity = dht_sensor.humidity()
 
-        # Read light sensor
+        # Read light sensor (simulated)
         light_raw = light_sensor.read_u16()
         light_level = get_light_level(light_raw)
 
@@ -137,7 +179,7 @@ def collect_sensor_data():
 
         return data
 
-    except OSError as e:
+    except Exception as e:
         print(f"Sensor error: {e}")
         return None
 
@@ -145,58 +187,54 @@ def collect_sensor_data():
 def get_led_status():
     """Get current LED status for display"""
     if RED.value():
-        return "RED (Bad Weather)"
+        return "🔴 RED (Bad Weather)"
     elif YELLOW.value():
-        return "YELLOW (Okay Weather)"
+        return "🟡 YELLOW (Okay Weather)"
     elif GREEN.value():
-        return "GREEN (Nice Weather)"
+        return "🟢 GREEN (Nice Weather)"
     else:
-        return "OFF"
+        return "⚫ OFF"
 
 
 def display_data(data):
     """Display formatted sensor data"""
     if data is None:
-        print("Failed to read sensors")
+        print("❌ Failed to read sensors")
         return
 
     print("\n" + "="*50)
-    print("WEATHER STATION DATA")
+    print("🌡️  WEATHER STATION DATA (SIMULATION)")
     print("="*50)
-    print(f"Temperature: {data['temperature']}C")
-    print(f"Humidity: {data['humidity']}%")
-    print(f"Light Level: {data['light_level']} ({data['light_raw']})")
-    print(f"Weather: {data['weather_condition']}")
-    print(f"Weather Quality: {data['weather_quality'].upper()}")
-    print(f"Outfit: {data['outfit_recommendation']}")
-    print(f"LED Status: {get_led_status()}")
-    print(f"Timestamp: {data['timestamp']}")
+    print(f"🌡️  Temperature: {data['temperature']}°C")
+    print(f"💧 Humidity: {data['humidity']}%")
+    print(f"☀️  Light Level: {data['light_level']} ({data['light_raw']})")
+    print(f"⛅ Weather: {data['weather_condition']}")
+    print(f"📊 Weather Quality: {data['weather_quality'].upper()}")
+    print(f"👕 Outfit: {data['outfit_recommendation']}")
+    print(f"💡 LED Status: {get_led_status()}")
+    print(f"⏰ Timestamp: {data['timestamp']}")
     print("="*50)
-
-    # Also print JSON format (ready for Firebase)
-    print("\nJSON Data (Firebase format):")
-    print(json.dumps(data))
 
 
 def upload_to_firebase(data):
     """Upload sensor data to Firebase Realtime Database"""
     if data is None:
-        print("No data to upload")
+        print("❌ No data to upload")
         return False
 
     try:
-        print("Uploading to Firebase...")
+        print("🔥 Uploading to Firebase...")
         success, message = firebase.push("weather_readings", data)
 
         if success:
-            print("Data uploaded successfully!")
+            print("✅ Data uploaded successfully!")
             return True
         else:
-            print(f"Upload failed: {message}")
+            print(f"❌ Upload failed: {message}")
             return False
 
     except Exception as e:
-        print(f"Firebase upload error: {e}")
+        print(f"❌ Firebase upload error: {e}")
         return False
 
 
@@ -208,25 +246,31 @@ def upload_latest_reading(data):
     try:
         success, message = firebase.set("latest_reading", data)
         if success:
-            print("Latest reading updated")
+            print("📍 Latest reading updated")
             return True
         else:
-            print(f"Latest reading update failed: {message}")
+            print(f"❌ Latest reading update failed: {message}")
             return False
     except Exception as e:
-        print(f"Latest reading error: {e}")
+        print(f"❌ Latest reading error: {e}")
         return False
 
 
 def main():
-    """Main loop - collect and upload data every 30 seconds"""
-    print("Weather Station Starting...")
-    print("Firebase integration enabled")
-    print("LED Weather Indicators: GREEN Nice | YELLOW Okay | RED Bad")
-    print("Collecting and uploading data every 30 seconds...")
+    """Main loop - collect and upload data every 10 seconds (faster for testing)"""
+    print("🚀 Weather Station Simulator Starting...")
+    print("🔥 Firebase integration enabled")
+    print("💡 LED Weather Indicators: 🟢 Nice | 🟡 Okay | 🔴 Bad")
+    print("📊 Collecting and uploading simulated data every 10 seconds...")
+    print("Press Ctrl+C to stop\n")
+
+    reading_count = 0
 
     while True:
         try:
+            reading_count += 1
+            print(f"\n📊 Reading #{reading_count}")
+
             # Collect sensor data
             sensor_data = collect_sensor_data()
 
@@ -241,26 +285,27 @@ def main():
                 upload_latest_reading(sensor_data)
 
                 if upload_success:
-                    print("Data successfully uploaded to Firebase!")
+                    print("🎉 Data successfully uploaded to Firebase!")
                 else:
-                    print("Upload failed - data displayed locally only")
+                    print("⚠️ Upload failed - data displayed locally only")
 
-            # Wait 30 seconds before next reading (reasonable for IoT)
-            print("Waiting 30 seconds until next reading...")
+            # Wait 10 seconds before next reading (faster for testing)
+            print("⏱️ Waiting 10 seconds until next reading...")
             time.sleep(10)
 
         except KeyboardInterrupt:
-            print("\nWeather Station Stopped")
+            print("\n🛑 Weather Station Simulator Stopped")
             # Turn off all LEDs
             RED.off()
             YELLOW.off()
             GREEN.off()
+            print(f"📊 Total readings taken: {reading_count}")
             break
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"❌ Error: {e}")
             time.sleep(10)
 
 
-# Run the weather station
+# Run the weather station simulator
 if __name__ == "__main__":
     main()

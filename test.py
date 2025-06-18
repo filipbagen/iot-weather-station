@@ -1,9 +1,22 @@
-# from machine import Pin
-# from time import sleep
-# import dht
+from machine import Pin
+from time import sleep
+import dht
 
-# # LED Blinking
-# led = Pin(0, Pin.OUT)
+# LED Blinking
+RED = Pin(0, Pin.OUT)
+YELLOW = Pin(1, Pin.OUT)
+GREEN = Pin(2, Pin.OUT)
+
+while True:
+    RED.on()
+    sleep(0.5)
+    RED.off()
+    YELLOW.on()
+    sleep(0.5)
+    YELLOW.off()
+    GREEN.on()
+    sleep(0.5)
+    GREEN.off()
 
 # # DHT Sensor
 # sensor = dht.DHT11(Pin(14))
@@ -52,13 +65,19 @@
 #     time.sleep(0.5)  # delay for 500 milliseconds
 
 
-from machine import ADC, Pin
-import time
+# from machine import ADC, Pin
+# import time
 
-# Connects to GP26 = ADC0
-ldr = ADC(Pin(26))
+# # Connects to GP26 = ADC0
+# ldr = ADC(Pin(26))
 
-while True:
-    light = ldr.read_u16()  # Returns a value from 0 (dark) to 65535 (bright)
-    print("Light level:", light)
-    time.sleep(1)
+# while True:
+#     light = ldr.read_u16()  # Returns a value from 0 (dark) to 65535 (bright)
+#     print("Light level:", light)
+#     time.sleep(1)
+
+import os
+print(os.listdir())
+
+import firebase_client
+print("Import successful!")

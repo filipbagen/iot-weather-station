@@ -17,18 +17,18 @@ firebase = FirebaseClient()
 
 def get_light_level(raw_value):
     """Convert raw ADC reading to descriptive light level"""
-    if raw_value < 300:
-        return "Very Dark"
-    elif raw_value < 400:
-        return "Dark"
-    elif raw_value < 500:
-        return "Dim"
-    elif raw_value < 600:
-        return "Light"
-    elif raw_value < 700:
-        return "Bright"
+    if raw_value > 50000:
+        level = "Very Bright"
+    elif raw_value > 30000:
+        level = "Bright"
+    elif raw_value > 15000:
+        level = "Dim"
+    elif raw_value > 5000:
+        level = "Dark"
     else:
-        return "Very Bright"
+        level = "Very Dark"
+
+    return level
 
 
 def get_weather_description(temp, humidity):

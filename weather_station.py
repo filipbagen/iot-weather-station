@@ -4,7 +4,7 @@ from machine import Pin, ADC
 import dht
 from firebase_client import FirebaseClient
 
-# Hardware setup - Updated LED setup
+# Hardware setup - LED indicators for weather quality
 RED = Pin(0, Pin.OUT)                # Red LED for bad weather
 YELLOW = Pin(1, Pin.OUT)             # Yellow LED for okay weather
 GREEN = Pin(2, Pin.OUT)              # Green LED for nice weather
@@ -18,17 +18,15 @@ firebase = FirebaseClient()
 def get_light_level(raw_value):
     """Convert raw ADC reading to descriptive light level"""
     if raw_value > 50000:
-        level = "Very Bright"
+        return "Very Bright"
     elif raw_value > 30000:
-        level = "Bright"
+        return "Bright"
     elif raw_value > 15000:
-        level = "Dim"
+        return "Dim"
     elif raw_value > 5000:
-        level = "Dark"
+        return "Dark"
     else:
-        level = "Very Dark"
-
-    return level
+        return "Very Dark"
 
 
 def get_weather_description(temp, humidity):
@@ -47,7 +45,6 @@ def get_weather_description(temp, humidity):
 
 def get_weather_quality(temp, humidity):
     """Determine if weather is nice, okay, or bad"""
-    # Bad weather conditions
     if temp < 5 or temp > 35:  # Too cold or too hot
         return "bad"
     elif humidity > 80:  # Too humid
@@ -66,7 +63,7 @@ def set_weather_leds(weather_quality):
     RED.off()
     YELLOW.off()
     GREEN.off()
-
+    
     # Turn on appropriate LED
     if weather_quality == "bad":
         RED.on()
@@ -76,33 +73,8 @@ def set_weather_leds(weather_quality):
         GREEN.on()
 
 
-def get_outfit_recommendation(temp, humidity, light_level):
-    """Recommend outfit based on weather conditions"""
-    outfit = []
-
-    # Base clothing
-    if temp < 5:
-        outfit.append("Heavy coat, warm layers")
-    elif temp < 15:
-        outfit.append("Jacket or sweater")
-    elif temp < 25:
-        outfit.append("Light jacket or long sleeves")
-    else:
-        outfit.append("T-shirt or light clothing")
-
-    # Humidity considerations
-    if humidity > 70:
-        outfit.append("breathable fabric")
-
-    # Light considerations
-    if light_level in ["Bright", "Very Bright"]:
-        outfit.append("sunglasses")
-
-    return ", ".join(outfit)
-
-
 def collect_sensor_data():
-    """Collect data from all sensors"""
+    """Collect data from all sensors and format for Firebase"""
     try:
         # Read DHT11 sensor
         dht_sensor.measure()
@@ -114,31 +86,31 @@ def collect_sensor_data():
         light_level = get_light_level(light_raw)
 
         # Get weather description and quality
-        weather = get_weather_description(temperature, humidity)
+        weather_condition = get_weather_description(temperature, humidity)
         weather_quality = get_weather_quality(temperature, humidity)
-
-        # Get outfit recommendation
-        outfit = get_outfit_recommendation(temperature, humidity, light_level)
 
         # Set LED indicators based on weather quality
         set_weather_leds(weather_quality)
 
-        # Create data structure (ready for Firebase)
+        # Create formatted data structure for Firebase
         data = {
-            "timestamp": time.time(),
+            "timestamp": int(time.time()),
             "temperature": temperature,
             "humidity": humidity,
             "light_raw": light_raw,
             "light_level": light_level,
-            "weather_condition": weather,
+            "weather_condition": weather_condition,
             "weather_quality": weather_quality,
-            "outfit_recommendation": outfit
+            "device_id": "weather_station_01"
         }
 
         return data
 
     except OSError as e:
         print(f"Sensor error: {e}")
+        return None
+    except Exception as e:
+        print(f"Data collection error: {e}")
         return None
 
 
@@ -168,14 +140,10 @@ def display_data(data):
     print(f"Light Level: {data['light_level']} ({data['light_raw']})")
     print(f"Weather: {data['weather_condition']}")
     print(f"Weather Quality: {data['weather_quality'].upper()}")
-    print(f"Outfit: {data['outfit_recommendation']}")
     print(f"LED Status: {get_led_status()}")
+    print(f"Device ID: {data['device_id']}")
     print(f"Timestamp: {data['timestamp']}")
     print("="*50)
-
-    # Also print JSON format (ready for Firebase)
-    print("\nJSON Data (Firebase format):")
-    print(json.dumps(data))
 
 
 def upload_to_firebase(data):
@@ -201,7 +169,7 @@ def upload_to_firebase(data):
 
 
 def upload_latest_reading(data):
-    """Upload the latest reading to a specific 'latest' path for easy access"""
+    """Upload the latest reading to Firebase for real-time access"""
     if data is None:
         return False
 
@@ -219,14 +187,20 @@ def upload_latest_reading(data):
 
 
 def main():
-    """Main loop - collect and upload data every 30 seconds"""
+    """Main loop - collect and upload weather data every 30 seconds"""
     print("Weather Station Starting...")
+    print("Hardware data collection mode")
     print("Firebase integration enabled")
     print("LED Weather Indicators: GREEN Nice | YELLOW Okay | RED Bad")
     print("Collecting and uploading data every 30 seconds...")
 
+    reading_count = 0
+    
     while True:
         try:
+            reading_count += 1
+            print(f"\n--- Reading #{reading_count} ---")
+            
             # Collect sensor data
             sensor_data = collect_sensor_data()
 
@@ -234,20 +208,20 @@ def main():
             display_data(sensor_data)
 
             if sensor_data:
-                # Upload to Firebase (all readings)
+                # Upload to Firebase (historical data)
                 upload_success = upload_to_firebase(sensor_data)
-
-                # Also update the latest reading
+                
+                # Update latest reading for real-time access
                 upload_latest_reading(sensor_data)
-
+                
                 if upload_success:
                     print("Data successfully uploaded to Firebase!")
                 else:
                     print("Upload failed - data displayed locally only")
 
-            # Wait 30 seconds before next reading (reasonable for IoT)
+            # Wait 30 seconds before next reading
             print("Waiting 30 seconds until next reading...")
-            time.sleep(10)
+            time.sleep(30)
 
         except KeyboardInterrupt:
             print("\nWeather Station Stopped")
@@ -255,10 +229,11 @@ def main():
             RED.off()
             YELLOW.off()
             GREEN.off()
+            print(f"Total readings taken: {reading_count}")
             break
         except Exception as e:
             print(f"Error: {e}")
-            time.sleep(10)
+            time.sleep(30)
 
 
 # Run the weather station

@@ -63,7 +63,7 @@ def set_weather_leds(weather_quality):
     RED.off()
     YELLOW.off()
     GREEN.off()
-    
+
     # Turn on appropriate LED
     if weather_quality == "bad":
         RED.on()
@@ -85,23 +85,19 @@ def collect_sensor_data():
         light_raw = light_sensor.read_u16()
         light_level = get_light_level(light_raw)
 
-        # Get weather description and quality
-        weather_condition = get_weather_description(temperature, humidity)
+        # Get weather quality for LED control (not stored in data)
         weather_quality = get_weather_quality(temperature, humidity)
 
         # Set LED indicators based on weather quality
         set_weather_leds(weather_quality)
 
-        # Create formatted data structure for Firebase
+        # Create clean data structure for Firebase (only essential sensor data)
         data = {
             "timestamp": int(time.time()),
             "temperature": temperature,
             "humidity": humidity,
             "light_raw": light_raw,
-            "light_level": light_level,
-            "weather_condition": weather_condition,
-            "weather_quality": weather_quality,
-            "device_id": "weather_station_01"
+            "light_level": light_level
         }
 
         return data
@@ -138,10 +134,7 @@ def display_data(data):
     print(f"Temperature: {data['temperature']}C")
     print(f"Humidity: {data['humidity']}%")
     print(f"Light Level: {data['light_level']} ({data['light_raw']})")
-    print(f"Weather: {data['weather_condition']}")
-    print(f"Weather Quality: {data['weather_quality'].upper()}")
     print(f"LED Status: {get_led_status()}")
-    print(f"Device ID: {data['device_id']}")
     print(f"Timestamp: {data['timestamp']}")
     print("="*50)
 
@@ -195,12 +188,12 @@ def main():
     print("Collecting and uploading data every 30 seconds...")
 
     reading_count = 0
-    
+
     while True:
         try:
             reading_count += 1
             print(f"\n--- Reading #{reading_count} ---")
-            
+
             # Collect sensor data
             sensor_data = collect_sensor_data()
 
@@ -210,10 +203,10 @@ def main():
             if sensor_data:
                 # Upload to Firebase (historical data)
                 upload_success = upload_to_firebase(sensor_data)
-                
+
                 # Update latest reading for real-time access
                 upload_latest_reading(sensor_data)
-                
+
                 if upload_success:
                     print("Data successfully uploaded to Firebase!")
                 else:

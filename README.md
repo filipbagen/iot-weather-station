@@ -204,7 +204,9 @@ The AI clothing system works by analyzing the current weather data and selecting
 
 The DeepSeek V3 API then generates styling advice like: "Given the warm weather of 26 degrees and moderate humidity, I'd recommend a light t-shirt and shorts. The breathable fabric will keep you comfortable while the casual style is perfect for a relaxed day indoors."
 
-![AI Outfit Recommender Page](images/app-outfit-page.png)
+<div style="text-align: center;">
+  <img src="images/app-outfit-page.png" alt="AI Outfit Recommender Page" style="width: 50%;">
+</div>
 
 _The AI outfit recommender showing a stitched image of clothing recommendations and AI-generated styling advice._
 

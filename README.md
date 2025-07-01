@@ -1,8 +1,8 @@
 # Smart Weather Station with AI Outfit Recommender
 
-Filip / fm222xn
+Filip Malm-Bägén / fm222xn
 
-In this project I have created an IoT weather station that collects temperature, humidity and light data using sensors connected to a Raspberry Pi Pico W. The system uploads this data to Firebase Realtime Database and features a Flutter mobile app that not only visualizes the weather data but also uses an AI model (DeepSeek V3) to recommend what clothes I should wear based on the current conditions. The weather station also has LED indicators that show weather quality at a glance - green for nice weather, yellow for okay conditions, and red for bad weather.
+In this project I have created an IoT weather station that collects temperature, humidity and light data using sensors connected to a Raspberry Pi Pico WH. The system uploads this data to Firebase Realtime Database and features a Flutter mobile app that not only visualizes the weather data but also uses an AI model (DeepSeek V3) to recommend what clothes I should wear based on the current conditions. The weather station also has LED indicators that show weather quality at a glance (green for nice weather, yellow for okay conditions, and red for bad weather).
 
 This project should take approximately 15-25 hours to complete depending on your experience with electronics, mobile app development, and AI integration.
 
@@ -10,9 +10,9 @@ This project should take approximately 15-25 hours to complete depending on your
 
 I chose this project because I wanted to get into IoT and hardware development as a complete beginner, but I didn't want to start with something too complicated. A weather station seemed like a perfect entry point that would teach me the basics of sensors, microcontrollers, and data collection.
 
-What made this project special was combining it with AI to create something practical and fun. I thought it would be cool to have my weather station not just tell me the temperature, but actually suggest what to wear. The idea of photographing myself in different outfits and having an AI stylist pick combinations based on real sensor data from my room was too entertaining to pass up.
+What made this project special was combining it with AI to create something practical and fun. I thought it would be cool to have my weather station not just tell me the temperature, but actually suggest what to wear.
 
-The insights I hoped to gain were both technical and practical - learning how to work with hardware and seeing how temperature and humidity change throughout the day in my living space. Plus, I wanted to see if an AI could actually give decent outfit advice based on weather data.
+The insights I hoped to gain were both technical and practical. I wanted to learn how to work with hardware and seeing how temperature and humidity change throughout the day in my living space. Plus, I wanted to see if an AI could actually give decent outfit advice based on weather data.
 
 ## Material
 
@@ -27,17 +27,17 @@ Below is a table of the main components used in the project.
 | LED 5mm Yellow Diffuse              | [Electrokit](https://www.electrokit.com/led-5mm-gul-diffus-1500mcd)              | 5 SEK    |
 | LED 5mm Green Diffuse               | [Electrokit](https://www.electrokit.com/led-5mm-gron-diffus-80mcd)               | 5 SEK    |
 
-In addition, you need a breadboard, resistors (220Ω for LEDs, 10kΩ for photoresistor), jumper wires and a USB-A to micro USB cable. The total cost for components is around 167.50 SEK (roughly $15-16 USD).
+In addition, you need a breadboard, resistors (220Ω for LEDs, 10kΩ for photoresistor), jumper wires and a USB-A to micro USB cable. The [Start Kit](https://www.electrokit.com/lnu-starter) from Electrokit is a great option that includes all og these components and then some. The total cost for the Start Kit is 349 SEK.
 
 ### Raspberry Pi Pico WH
 
-The Raspberry Pi Pico WH is the heart of this project. It's a microcontroller that runs MicroPython and has built-in WiFi, which is perfect for sending data to the cloud. The "WH" version comes with pre-soldered headers, which makes it much easier to work with on a breadboard. It has plenty of GPIO pins for connecting sensors and LEDs.
+The Raspberry Pi Pico W is the heart of this project. It's a microcontroller that runs MicroPython and has built-in WiFi, which is perfect for sending data to the cloud. The "WH" version comes with pre-soldered headers, which makes it much easier to work with on a breadboard. It has plenty of GPIO pins for connecting sensors and LEDs.
 
 ![Raspberry Pi Pico WH](images/pico-wh.jpg)
 
 ### DHT11 Temperature & Humidity Sensor
 
-This sensor does exactly what it says - it measures both temperature and humidity. It's not the most accurate sensor out there, but it's perfect for a beginner project and gives consistent readings that are good enough for weather monitoring and outfit recommendations.
+This sensor measures both temperature and humidity. It's not the most accurate sensor, but it's perfect for a beginner project and gives consistent readings that are good enough for weather monitoring and outfit recommendations.
 
 ![DHT11 Temperature & Humidity Sensor](images/dht11-sensor.jpg)
 
@@ -94,7 +94,7 @@ The data flow looks like this:
 
 - Raspberry Pi Pico → Firebase Realtime Database → Flutter App → DeepSeek V3 API
 
-I considered other options like AWS IoT or a self-hosted solution, but Firebase was the most beginner-friendly option and had everything I needed built-in. If I wanted to scale this up, I could easily move to Firebase's paid tier or migrate to a more robust cloud platform.
+I used Firebase becasue I have worked with it before and it is easy to get started with.
 
 ## The code
 
@@ -200,12 +200,13 @@ This is where the project gets interesting. The second page shows:
 - A stitched image of me wearing AI-recommended clothes
 - An AI-generated text explanation of why these clothes were chosen
 
-The AI clothing system works by analyzing the current weather data and selecting from pre-photographed images of me in different outfits. I spent quite a bit of time photographing myself in various combinations of shirts, pants, shoes, and accessories, then cropping out individual items. The AI uses the filename conventions to pick appropriate combinations (like "tshirt_summer.png" or "hoodie_winter.png") based on temperature and humidity.
+The AI clothing system works by analyzing the current weather data and selecting from pre-photographed images of me in different outfits. I spent quite a bit of time photographing myself in various combinations of shirts, pants, shoes, and accessories, then cropping out individual items. The AI uses the filename conventions to pick appropriate combinations (like "tshirt_white.jpg" or "trousers_black.jpg") based on temperature and humidity.
 
 The DeepSeek V3 API then generates styling advice like: "Given the warm weather of 26 degrees and moderate humidity, I'd recommend a light t-shirt and shorts. The breathable fabric will keep you comfortable while the casual style is perfect for a relaxed day indoors."
 
 <div style="text-align: center;">
-  <img src="images/app-outfit-page.png" alt="AI Outfit Recommender Page" style="width: 50%;">
+  <img src="images/app-outfit-page_1.png" alt="AI Outfit Recommender Page" style="width: 50%;">
+  <img src="images/app-outfit-page_2.png" alt="AI Outfit Recommendation" style="width: 50%;">
 </div>
 
 _The AI outfit recommender showing a stitched image of clothing recommendations and AI-generated styling advice._
@@ -220,7 +221,7 @@ The AI outfit recommender turned out to be surprisingly accurate and entertainin
 
 If I were to do this project again, I might add more sensors like air pressure or UV detection. I'd also consider making the hardware more permanent with a custom PCB and 3D-printed case. The software side could be expanded with notifications when weather conditions change dramatically.
 
-The biggest learning experience was realizing how important memory management is on microcontrollers. The "out of memory" errors taught me to be more careful about variable cleanup and garbage collection.
+One learning experience was realizing how important memory management is on microcontrollers. The "out of memory" errors taught me to be more careful about variable cleanup and garbage collection. I also learned a lot about IoT and how to handle real-time data transmission effectively, and combining hardware and software in a single project was a great way to see how all these technologies can work together.
 
 Overall, this project was a perfect introduction to IoT development. It combined hardware, cloud services, mobile development, and AI in a way that's actually useful in daily life. Plus, it's genuinely fun to check what outfit the AI thinks I should wear each morning!
 

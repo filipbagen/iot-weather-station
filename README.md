@@ -33,19 +33,19 @@ In addition, you need a breadboard, resistors (220Ω for LEDs, 10kΩ for photore
 
 The Raspberry Pi Pico W is the heart of this project. It's a microcontroller that runs MicroPython and has built-in WiFi, which is perfect for sending data to the cloud. The "WH" version comes with pre-soldered headers, which makes it much easier to work with on a breadboard. It has plenty of GPIO pins for connecting sensors and LEDs.
 
-![Raspberry Pi Pico WH](images/pico-wh.jpg)
+<img src="images/pico-wh.jpg" alt="Raspberry Pi Pico WH" style="width: 40%;">
 
 ### DHT11 Temperature & Humidity Sensor
 
 This sensor measures both temperature and humidity. It's not the most accurate sensor, but it's perfect for a beginner project and gives consistent readings that are good enough for weather monitoring and outfit recommendations.
 
-![DHT11 Temperature & Humidity Sensor](images/dht11-sensor.jpg)
+<img src="images/dht11-sensor.jpg" alt="DHT11 Temperature & Humidity Sensor" style="width: 40%;">
 
 ### CdS Photoresistor
 
 A simple light-dependent resistor that changes its resistance based on how much light hits it. I use this to detect how bright it is in the room, which helps determine if it's day or night and influences the outfit recommendations.
 
-![CdS Photoresistor](images/photoresistor.jpg)
+<img src="images/photoresistor.jpg" alt="CdS Photoresistor" style="width: 40%;">
 
 ### Status LEDs
 
@@ -204,9 +204,9 @@ The AI clothing system works by analyzing the current weather data and selecting
 
 The DeepSeek V3 API then generates styling advice like: "Given the warm weather of 26 degrees and moderate humidity, I'd recommend a light t-shirt and shorts. The breathable fabric will keep you comfortable while the casual style is perfect for a relaxed day indoors."
 
-<div style="text-align: center;">
-  <img src="images/app-outfit-page_1.png" alt="AI Outfit Recommender Page" style="width: 50%;">
-  <img src="images/app-outfit-page_2.png" alt="AI Outfit Recommendation" style="width: 50%;">
+<div style="display: flex; justify-content: space-between;">
+  <img src="images/app-outfit-page_1.png" alt="AI Outfit Recommender Page" style="width: 48%;">
+  <img src="images/app-outfit-page_2.png" alt="AI Outfit Recommendation" style="width: 48%;">
 </div>
 
 _The AI outfit recommender showing a stitched image of clothing recommendations and AI-generated styling advice._

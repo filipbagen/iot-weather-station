@@ -2,6 +2,8 @@ import json
 import time
 from machine import Pin, ADC
 import dht
+import ntptime
+import network
 from firebase_client import FirebaseClient
 
 # Hardware setup - LED indicators for weather quality
@@ -13,6 +15,31 @@ light_sensor = ADC(Pin(26))          # Photoresistor on GPIO 26 (ADC0)
 
 # Firebase setup
 firebase = FirebaseClient()
+
+
+def sync_time_with_ntp():
+    """Synchronize time with NTP server"""
+    try:
+        print("Synchronizing time with NTP server...")
+        ntptime.settime()
+        current_time = time.localtime()
+        print(
+            f"Time synchronized successfully! Current time: {current_time[0]}-{current_time[1]:02d}-{current_time[2]:02d} {current_time[3]:02d}:{current_time[4]:02d}:{current_time[5]:02d}")
+        return True
+    except Exception as e:
+        print(f"Time sync failed: {e}")
+        return False
+
+
+def check_wifi_connection():
+    """Check if WiFi is connected"""
+    wlan = network.WLAN(network.STA_IF)
+    if wlan.isconnected():
+        print(f"WiFi connected - IP: {wlan.ifconfig()[0]}")
+        return True
+    else:
+        print("WiFi not connected")
+        return False
 
 
 def get_light_level(raw_value):
@@ -189,10 +216,23 @@ def main():
 
     reading_count = 0
 
+    # Synchronize time with NTP server at startup
+    sync_time_with_ntp()
+
+    # Keep track of last sync time for periodic resync
+    last_sync_time = time.time()
+
     while True:
         try:
             reading_count += 1
             print(f"\n--- Reading #{reading_count} ---")
+
+            # Resync time every hour (3600 seconds) to maintain accuracy
+            current_time = time.time()
+            if current_time - last_sync_time > 3600:
+                print("Periodic time sync (hourly)...")
+                if sync_time_with_ntp():
+                    last_sync_time = current_time
 
             # Collect sensor data
             sensor_data = collect_sensor_data()

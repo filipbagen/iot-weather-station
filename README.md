@@ -185,11 +185,11 @@ The first page shows:
 - Historical temperature and humidity graphs
 - Regional weather from OpenWeatherMap API for comparison
 
-![Flutter App Weather Page](images/app-weather-page.png)
-
-![Flutter App Weather Page](images/app-weather-page-history.png)
-
-![Flutter App Weather Page](images/app-weather-page-regional.png)
+<div style="display: flex; justify-content: space-between;">
+  <img src="images/app-weather-page.png" alt="Weather Page" style="width: 30%;">
+  <img src="images/app-weather-page-history.png" alt="Weather History" style="width: 30%;">
+  <img src="images/app-weather-page-regional.png" alt="Regional Weather" style="width: 30%;">
+</div>
 
 _The main weather page showing live sensor data, historical graphs, and regional weather comparison._
 

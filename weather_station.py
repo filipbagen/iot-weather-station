@@ -1,5 +1,6 @@
 import json
 import time
+import gc
 from machine import Pin, ADC
 import dht
 import ntptime
@@ -251,6 +252,15 @@ def main():
                     print("Data successfully uploaded to Firebase!")
                 else:
                     print("Upload failed - data displayed locally only")
+
+                # Clear sensor data from memory after upload attempt
+                sensor_data = None
+
+            # Force garbage collection to free up RAM
+            gc.collect()
+
+            # Print memory usage for monitoring
+            print(f"Free memory: {gc.mem_free()} bytes")
 
             # Wait 30 seconds before next reading
             print("Waiting 30 seconds until next reading...")

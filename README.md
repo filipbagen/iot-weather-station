@@ -184,9 +184,9 @@ The first page shows:
 - Regional weather from OpenWeatherMap API for comparison
 
 <div style="display: flex; justify-content: space-between;">
-  <img src="images/app-weather-page.png" alt="Weather Page" style="width: 33%;">
-  <img src="images/app-weather-page-history.png" alt="Weather History" style="width: 33%;">
-  <img src="images/app-weather-page-regional.png" alt="Regional Weather" style="width: 33%;">
+  <img src="images/app-weather-page.png" alt="Weather Page" style="width: 32%;">
+  <img src="images/app-weather-page-history.png" alt="Weather History" style="width: 32%;">
+  <img src="images/app-weather-page-regional.png" alt="Regional Weather" style="width: 32%;">
 </div>
 
 _The main weather page showing live sensor data, historical graphs, and regional weather comparison._
@@ -203,8 +203,8 @@ The AI clothing system works by analyzing the current weather data and selecting
 The DeepSeek V3 API then generates styling advice like: "Given the warm weather of 26 degrees and moderate humidity, I'd recommend a light t-shirt and shorts. The breathable fabric will keep you comfortable while the casual style is perfect for a relaxed day indoors."
 
 <div style="display: flex; justify-content: space-between;">
-  <img src="images/app-outfit-page_1.png" alt="AI Outfit Recommender Page" style="width: 50%;">
-  <img src="images/app-outfit-page_2.png" alt="AI Outfit Recommendation" style="width: 50%;">
+  <img src="images/app-outfit-page_1.png" alt="AI Outfit Recommender Page" style="width: 49%;">
+  <img src="images/app-outfit-page_2.png" alt="AI Outfit Recommendation" style="width: 49%;">
 </div>
 
 _The AI outfit recommender showing a stitched image of clothing recommendations and AI-generated styling advice._

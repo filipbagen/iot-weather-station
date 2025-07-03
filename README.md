@@ -27,7 +27,7 @@ Below is a table of the main components used in the project.
 | LED 5mm Yellow Diffuse              | [Electrokit](https://www.electrokit.com/led-5mm-gul-diffus-1500mcd)              | 5 SEK    |
 | LED 5mm Green Diffuse               | [Electrokit](https://www.electrokit.com/led-5mm-gron-diffus-80mcd)               | 5 SEK    |
 
-In addition, you need a breadboard, resistors (220Ω for LEDs, 10kΩ for photoresistor), jumper wires and a USB-A to micro USB cable. The [Start Kit](https://www.electrokit.com/lnu-starter) from Electrokit is a great option that includes all og these components and then some. The total cost for the Start Kit is 349 SEK.
+In addition, you need a breadboard, resistors (220Ω for LEDs, 10kΩ for photoresistor), jumper wires and a USB-A to micro USB cable. The [Start Kit](https://www.electrokit.com/lnu-starter) from Electrokit is a great option that includes all of these components and then some. The total cost for the Start Kit is 349 SEK.
 
 ### Raspberry Pi Pico WH
 
@@ -72,7 +72,7 @@ First, you need to install MicroPython firmware on the Pico. Download the latest
 
 ### Development Environment
 
-I used VS Code with the Pymakr extension to write and upload code to the Pico. You'll also need Node.js installed for Pymakr to work properly. The setup is pretty straightforward - just install the extension and it guides you through connecting to your device.
+I used VS Code with the Pymakr extension to write and upload code to the Pico. You'll also need Node.js installed for Pymakr to work properly. The setup is pretty straightforward, just install the extension and it guides you through connecting to your device.
 
 ### Firebase Setup
 
@@ -88,13 +88,11 @@ _Complete breadboard setup showing all connections between the Raspberry Pi Pico
 
 ## Platform
 
-I decided to use Firebase as my cloud platform for several reasons. First, it's free for small projects like this, and the real-time database is perfect for IoT applications where you want immediate updates. Firebase also integrates really well with Flutter, which made building the mobile app much easier.
+I decided to use Firebase as my cloud platform for several reasons. First, it's free for small projects like this, and the real-time database is perfect for IoT applications where you want immediate updates. I have also worked with it previously.
 
 The data flow looks like this:
 
 - Raspberry Pi Pico → Firebase Realtime Database → Flutter App → DeepSeek V3 API
-
-I used Firebase becasue I have worked with it before and it is easy to get started with.
 
 ## The code
 
@@ -169,7 +167,7 @@ The data is sent in JSON format like this:
 }
 ```
 
-WiFi was the obvious choice for connectivity since the weather station sits in my room where I have reliable internet. The 30-second interval gives good data resolution without overwhelming the free Firebase quota.
+WiFi was the obvious choice for connectivity since the weather station sits in my room where I have reliable internet. The 30-second interval gives good data resolution without overwhelming the free Firebase quota. However, I could probaly increase this to 5 to 10 minutes without issue, because the weather doesn't change that quickly.
 
 One important addition was NTP time synchronization. The Pico doesn't have a real-time clock, so without internet time sync, all timestamps would be wrong. I added automatic time synchronization at startup and every hour to keep things accurate.
 
@@ -186,9 +184,9 @@ The first page shows:
 - Regional weather from OpenWeatherMap API for comparison
 
 <div style="display: flex; justify-content: space-between;">
-  <img src="images/app-weather-page.png" alt="Weather Page" style="width: 30%;">
-  <img src="images/app-weather-page-history.png" alt="Weather History" style="width: 30%;">
-  <img src="images/app-weather-page-regional.png" alt="Regional Weather" style="width: 30%;">
+  <img src="images/app-weather-page.png" alt="Weather Page" style="width: 33%;">
+  <img src="images/app-weather-page-history.png" alt="Weather History" style="width: 33%;">
+  <img src="images/app-weather-page-regional.png" alt="Regional Weather" style="width: 33%;">
 </div>
 
 _The main weather page showing live sensor data, historical graphs, and regional weather comparison._
@@ -205,13 +203,13 @@ The AI clothing system works by analyzing the current weather data and selecting
 The DeepSeek V3 API then generates styling advice like: "Given the warm weather of 26 degrees and moderate humidity, I'd recommend a light t-shirt and shorts. The breathable fabric will keep you comfortable while the casual style is perfect for a relaxed day indoors."
 
 <div style="display: flex; justify-content: space-between;">
-  <img src="images/app-outfit-page_1.png" alt="AI Outfit Recommender Page" style="width: 48%;">
-  <img src="images/app-outfit-page_2.png" alt="AI Outfit Recommendation" style="width: 48%;">
+  <img src="images/app-outfit-page_1.png" alt="AI Outfit Recommender Page" style="width: 50%;">
+  <img src="images/app-outfit-page_2.png" alt="AI Outfit Recommendation" style="width: 50%;">
 </div>
 
 _The AI outfit recommender showing a stitched image of clothing recommendations and AI-generated styling advice._
 
-Data is preserved in Firebase indefinitely on the free tier, though I could set up automatic deletion if storage becomes an issue.
+Data is preserved in Firebase indefinitely, though I could set up automatic deletion if storage becomes an issue.
 
 ## Finalizing the design
 
@@ -240,4 +238,4 @@ WIFI_SSID = 'your_wifi_ssid'
 WIFI_PASS = 'your_wifi_password'
 ```
 
-Replace the credentials with your actual WiFi network details, and you're ready to start collecting weather data!
+Replace the credentials with your actual WiFi network details.
